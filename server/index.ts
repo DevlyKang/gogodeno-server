@@ -1,5 +1,6 @@
-import { Application } from 'https://deno.land/x/oak/mod.ts';
-import REST from '../services/rest.ts';
+import { Application } from "https://deno.land/x/oak/mod.ts";
+
+import { mock, user } from "../routes/index.ts";
 
 const app = new Application();
 
@@ -18,16 +19,19 @@ app.use(async (ctx, next) => {
   ctx.response.headers.set("X-Response-Time", `${ms}ms`);
 });
 
-app.use(REST.routes());
-app.use(REST.allowedMethods());
+app.use(mock.routes());
+app.use(mock.allowedMethods());
+
+app.use(user.routes());
+app.use(user.allowedMethods());
 
 const PORT = 8000;
 
-app.addEventListener('listen', ({ hostname, port, secure }) => {
+app.addEventListener("listen", ({ hostname, port, secure }) => {
   console.log(
-    `Listening on: ${secure ? "https://" : "http://"}${hostname ?? "localhost"}:${port}`
-  )
+    `Listening on: ${secure ? "https://" : "http://"}${hostname ??
+      "localhost"}:${port}`,
+  );
 });
 
 await app.listen({ port: PORT });
-console.log('Terminated :(');
